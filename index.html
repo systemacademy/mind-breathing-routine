@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>🌗 روتینِ تنفس ذهن</title>
+
+<!-- فونت وزیرمتن -->
+<link href="https://cdn.jsdelivr.net/npm/vazirmatn@33.003/fonts/web/Vazirmatn-font-face.css" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Vazirmatn", "Segoe UI", Tahoma, sans-serif;
+    background: linear-gradient(180deg, #f7f9fc, #ffffff);
+    margin: 0;
+    padding: 0;
+    direction: rtl;
+    color: #1a1a1a;
+  }
+
+  .container {
+    max-width: 720px;
+    margin: 50px auto;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    padding: 28px 26px 36px;
+  }
+
+  h1 {
+    margin-top: 0;
+    color: #2f3e9e;
+    font-weight: 700;
+    font-size: 22px;
+  }
+
+  p {
+    line-height: 1.7;
+  }
+
+  .question {
+    border: 1px solid #e5e7eb;
+    background: #fafbfc;
+    padding: 14px 16px;
+    border-radius: 12px;
+    margin-top: 12px;
+    transition: all 0.2s ease;
+  }
+
+  .question:hover {
+    background: #f1f5ff;
+  }
+
+  button {
+    border: none;
+    border-radius: 10px;
+    padding: 9px 14px;
+    cursor: pointer;
+    margin-top: 8px;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+
+  .btnA, .btnB {
+    background: #f3f4f6;
+    color: #333;
+    width: 100%;
+    text-align: right;
+  }
+
+  .btnA.active, .btnB.active {
+    background: #2f3e9e;
+    color: #fff;
+  }
+
+  .primary {
+    background: #2f3e9e;
+    color: #fff;
+    margin-top: 20px;
+    font-weight: 500;
+    padding: 10px 20px;
+  }
+
+  .result, .routine {
+    margin-top: 26px;
+  }
+
+  pre {
+    background: #f8fafc;
+    padding: 16px;
+    border-radius: 10px;
+    white-space: pre-wrap;
+    line-height: 1.8;
+  }
+
+  .footer {
+    margin-top: 24px;
+    font-size: 13px;
+    color: #777;
+    text-align: center;
+  }
+
+  @media (max-width:600px){
+    .container { margin: 20px; padding: 20px; }
+    button { font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🌗 روتینِ تنفس ذهن</h1>
+  <p>به ۸ سؤال زیر پاسخ بده تا نوع ذهنت مشخص بشه و برنامه‌ی پیشنهادی مخصوصت نمایش داده بشه.</p>
+
+  <div id="test"></div>
+  <div id="result" class="result"></div>
+  <div id="routine" class="routine"></div>
+
+  <div class="footer">طراحی شده برای ذهن‌های دقیق و خلاق 💡</div>
+</div>
+
+<script>
+const questions = [
+  ["وقتی برنامه‌ی روزت ناگهان به‌هم می‌خوره، احساس می‌کنی:",
+   "A — عصبی و بی‌قرار می‌شی چون تعادل ذهنت به‌هم می‌خوره.",
+   "B — هیجان‌زده می‌شی چون حس ماجراجویی پیدا می‌کنی."],
+  ["دفتر کار یا اتاقت:",
+   "A — معمولاً منظم و ثابت‌چیده‌ست.",
+   "B — هر هفته یه شکلی می‌شه چون از تغییر انرژی می‌گیری."],
+  ["وقتی روی پروژه‌ای کار می‌کنی:",
+   "A — ترجیح می‌دی روال ثابتی داشته باشی تا تمرکز کنی.",
+   "B — دوست داری مسیر متفاوت امتحان کنی."],
+  ["در برابر عادت‌ها:",
+   "A — برات مهمه صبح و شب طبق الگوی خاصی باشن.",
+   "B — از تکرار خسته می‌شی و دنبال تازگی‌ای."],
+  ["در جمع‌های اجتماعی:",
+   "A — وقتی فضا غیرقابل‌پیش‌بینیه، مضطرب می‌شی.",
+   "B — وقتی همه‌چیز قابل‌پیش‌بینیه، حوصله‌ت سر می‌ره."],
+  ["وقتی غذای همیشگیت عوض می‌شه:",
+   "A — حس می‌کنی چیزی خراب شده.",
+   "B — تجربه‌ی جدید برات جالبه حتی اگه خوشمزه نباشه."],
+  ["برای فکر کردن خلاقانه‌تر:",
+   "A — باید محیط آروم و ساختارمند باشه.",
+   "B — باید محیط پرتحرک یا آشفته باشه."],
+  ["وقتی یه ایده‌ی عالی داری:",
+   "A — سریع براش ساختار و برنامه می‌چینی.",
+   "B — می‌ذاری ایده خودش رشد کنه بدون عجله."]
+];
+
+const answers = {};
+const testDiv = document.getElementById("test");
+const resultDiv = document.getElementById("result");
+const routineDiv = document.getElementById("routine");
+
+// ساخت تست
+questions.forEach((q, i) => {
+  const div = document.createElement("div");
+  div.className = "question";
+  div.innerHTML = `
+    <strong>${i+1}. ${q[0]}</strong><br>
+    <button class="btnA" onclick="choose(${i}, 'A', this)">${q[1]}</button><br>
+    <button class="btnB" onclick="choose(${i}, 'B', this)">${q[2]}</button>
+  `;
+  testDiv.appendChild(div);
+});
+
+const btn = document.createElement("button");
+btn.className = "primary";
+btn.textContent = "دیدن نتیجه";
+btn.onclick = showResult;
+testDiv.appendChild(btn);
+
+// انتخاب گزینه
+function choose(i, val, el) {
+  answers[i] = val;
+  const parent = el.parentElement;
+  parent.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
+  el.classList.add("active");
+}
+
+// محاسبه نتیجه
+function showResult(){
+  let aCount=0,bCount=0;
+  for(let i=0;i<questions.length;i++){
+    if(answers[i]==="A") aCount++;
+    else if(answers[i]==="B") bCount++;
+  }
+  if(aCount+bCount<8){
+    alert("لطفاً به همه‌ی سؤالات پاسخ بده 😊");
+    return;
+  }
+
+  let type="", desc="";
+  if(aCount-bCount>=2){
+    type="ذهن تحلیلی باهوش (Analytical)";
+    desc="تو ساختار و نظم رو دوست داری و روتین کمکت می‌کنه انرژی ذهنی‌ت آزاد شه.";
+  } else if(bCount-aCount>=2){
+    type="ذهن خلاق باهوش (Creative)";
+    desc="تو از تکرار خسته می‌شی و به تنوع نیاز داری؛ اما یه چارچوب حداقلی لازمه.";
+  } else if(aCount>=bCount){
+    type="ذهن هیبریدی — Structured Innovator";
+    desc="ترکیبی از نظم و خلاقیت؛ ترجیح می‌دی چارچوبی بسازی که خودت کنترلش کنی.";
+  } else {
+    type="ذهن هیبریدی — Adaptive Creator";
+    desc="انعطاف‌پذیر و خلاقی؛ به تغییر نیاز داری اما ساختار ساده آرامت می‌کنه.";
+  }
+
+  resultDiv.innerHTML = `
+    <h3>نتیجه:</h3>
+    <p><strong>${type}</strong></p>
+    <p>${desc}</p>
+    <button class="primary" onclick="showRoutine('${type}')">نمایش برنامه پیشنهادی</button>
+  `;
+}
+
+// نمایش روتین پیشنهادی
+function showRoutine(type){
+  let text = "🌗 روتینِ تنفس ذهن\n\n";
+  if(type.includes("تحلیلی")){
+    text += `🧭 ساختار پیشنهادی:\n- بیداری ثابت (۷ تا ۷:۳۰)\n- ۱۵ دقیقه بدون موبایل\n- ۲ بازه تمرکز عمیق ۹۰ دقیقه‌ای\n- ۱ ساعت آزاد عصرها برای رها کردن ذهن\n- مرور شبانه با ۳ سؤال: چی خوب پیش رفت؟ چی خسته‌م کرد؟ فردا چی متفاوت باشه؟`;
+  } else if(type.includes("خلاق")){
+    text += `🌪 ساختار پیشنهادی:\n- ساعت بیداری آزاد بین ۸ تا ۹\n- صبح آزاد برای الهام و یادداشت‌برداری\n- فقط ۱ بازه تمرکز عمیق در روز\n- هر دو هفته یه عادت جدید و حذف قبلی\n- روز بی‌نظم هفتگی برای تنفس ذهن`;
+  } else {
+    text += `⚖️ ساختار پیشنهادی:\n- بیداری بین ۷ تا ۷:۳۰\n- ۱۵ دقیقه شروع روز بدون موبایل\n- ۲ بازه تمرکز ۹۰ دقیقه‌ای با استراحت ۱۵ دقیقه‌ای\n- هر روز ۱ ساعت بی‌قانون برای خلاقیت\n- یک روز آزاد کامل در هفته برای بازیابی ذهن`;
+  }
+
+  routineDiv.innerHTML = `<h3>برنامه پیشنهادی:</h3><pre>${text}</pre>`;
+}
+</script>
+</body>
+</html>
